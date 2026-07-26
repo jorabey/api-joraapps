@@ -1,0 +1,103 @@
+my-app-store-backend/
+│
+├── src/                          # Asosiy dastur kodi
+│   ├── config/                   # Sozlamalar
+│   │   ├── database.js           # MongoDB Atlas ulanishi
+│   │   ├── env.js                # .env o'zgaruvchilarini tekshirish
+│   │   ├── redis.js              # Redis (OTP va Rate Limit uchun juda muhim)
+│   │
+│   ├── api/                      # Domenlar (Feature modules)
+│   │   │
+│   │   ├── v1/client/            # FOYDALANUVCHILAR UCHUN API (Client-side)
+│   │   │   ├── auth/             # Ro'yxatdan o'tish, Login, OTP
+│   │   │   │   ├── auth.controller.js
+│   │   │   │   ├── auth.route.js
+│   │   │   │   └── auth.validation.js
+│   │   │   ├── users/            # Profil, Sozlamalar, Global ruxsatlar
+│   │   │   │   ├── user.controller.js
+│   │   │   │   └── user.route.js
+│   │   │   ├── apps/             # Ilovalar ro'yxati, Search, Pin, Save
+│   │   │   │   ├── app.controller.js  # Pagination va Sort (MAU bo'yicha) shu yerda
+│   │   │   │   └── app.route.js
+│   │   │   ├── connections/      # User va App o'rtasidagi aloqa (My Apps, Ruxsatlar)
+│   │   │   │   ├── connection.controller.js
+│   │   │   │   └── connection.route.js
+│   │   │
+│   │   ├── v1/developer/         # DASTURCHILAR UCHUN API (Dev-side)
+│   │   │   ├── auth/             # Dasturchilar logini
+│   │   │   ├── my-apps/          # Dasturchi o'z ilovalarini qo'shishi, tahrirlashi
+│   │   │   ├── analytics/        # Ilova statistikasi (MAU, ulanganlar)
+│   │   │   └── api-keys/         # App Token va Secret yaratish
+│   │   │
+│   │   └── v1/bridge/            # ILOVALAR UCHUN API (App to Server aloqasi)
+│   │       ├── push/             # Ilovadan kelgan Push xabarlarni qabul qilish
+│   │       ├── user-data/        # Ilova foydalanuvchi ma'lumotini so'rashi
+│   │       └── event-logs/       # Ilova ichidagi harakatlar tarixi
+│   │
+│   ├── models/                   # MongoDB Schemalar (Barchasi uchun umumiy)
+│   │   ├── User.js               # Foydalanuvchi ma'lumotlari
+│   │   ├── Developer.js          # Dasturchi akkauntlari
+│   │   ├── App.js                # Ilovalar (nomi, desc, url, icon, MAU counter)
+│   │   ├── UserAppConnection.js  # O'ta muhim! Qaysi user qaysi appga qanday ruxsat bergani
+│   │   ├── Session.js            # Tirik sessiyalar (Device tokenlar)
+│   │   ├── OtpBlock.js           # Qora ro'yxat va 24 soatlik bloklar tarixi
+│   │   └── AppReport.js          # Shikoyatlar (Reports)
+│   │
+│   ├── services/                 # BIZNES MANTIQ (Eng asosiy joy)
+│   │   ├── otp.service.js        # OTP jo'natish, 3 marta/2 daqiqa mantiqini tekshirish
+│   │   ├── email.service.js      # Nodemailer yoki SendGrid orqali xat jo'natish
+│   │   ├── auth.service.js       # Login va Parol tekshirishlari
+│   │   ├── notification.service.js # Push notification jo'natish mantiqi
+│   │   └── app-security.service.js # Ilova tokenni va URL ni tasdiqlash
+│   │
+│   ├── middlewares/              # O'rtakash funksiyalar
+│   │   ├── requireAuth.js        # JWT tekshirish
+│   │   ├── requireDevAuth.js     # Dasturchi ekanligini tekshirish
+│   │   ├── verifyAppSignature.js # Ilovadan kelgan so'rovning to'g'riligini tekshirish
+│   │   ├── rateLimiter.js        # IP yoki User bo'yicha spamni to'sish
+│   │   └── errorHandler.js       # Barcha xatoliklarni chiroyli qilib ushlash
+│   │
+│   ├── websockets/               # Real vaqt xizmatlari (Socket.io)
+│   │   ├── socket.js             # Asosiy socket ulanishi
+│   │   └── notification.handlers.js # Push xabarlarni userga yetkazish
+│   │
+│   ├── utils/                    # Yordamchi funksiyalar
+│   │   ├── appErrors.js          # Custom xatolik klasslari (masalan, OtpBlockedError)
+│   │   ├── generateTokens.js     # JWT va Refresh token yaratish
+│   │   └── pagination.js         # Scroll uchun 20-30 talab ma'lumot berish logikasi
+│   │
+│   ├── app.js                    # Express ilovasini yig'ish (Middlewares, Routelar)
+│   └── server.js                 # Serverni ishga tushirish (Portni eshitish)
+│
+├── .env                          # Maxfiy kalitlar
+├── .gitignore
+├── package.json
+└── README.md
+
+
+├── src/api/v1/developer/          # DASTURCHILAR UCHUN API
+│   ├── auth/                      # Developer auth (Login/Register)
+│   │   ├── dev.auth.controller.js
+│   │   ├── dev.auth.route.js
+│   │   └── dev.auth.validation.js
+│   ├── my-apps/                   # Ilovani boshqarish (CRUD)
+│   │   ├── my-apps.controller.js
+│   │   ├── my-apps.route.js
+│   │   └── my-apps.validation.js
+│   ├── analytics/                 # Ilova statistikasi
+│   │   ├── analytics.controller.js
+│   │   └── analytics.route.js
+│   └── api-keys/                  # AppToken/Secret boshqaruvi
+│       ├── api-keys.controller.js
+│       └── api-keys.route.js
+│
+├── src/api/v1/bridge/             # ILOVALAR UCHUN API (External Apps)
+│   ├── push/                      # Push bildirishnomalar (App -> Server)
+│   │   ├── push.controller.js
+│   │   └── push.route.js
+│   ├── user-data/                 # User data so'rovlari (App -> Server)
+│   │   ├── user-data.controller.js
+│   │   └── user-data.route.js
+│   └── event-logs/                # Ilova ichidagi harakatlar tarixi (Logging)
+│       ├── event-logs.controller.js
+│       └── event-logs.route.js
