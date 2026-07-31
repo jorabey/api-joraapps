@@ -48,8 +48,8 @@ const extractDeviceInfo = (req) => {
 const setRefreshTokenCookie = (res, token) => {
   res.cookie('refreshToken', token, {
     httpOnly: true, // JavaScript o'qiy olmaydi (XSS himoyasi)
-    secure: false, // Faqat HTTPS orqali o'tadi
-    sameSite: 'lax',
+    secure: true, // Faqat HTTPS orqali o'tadi
+    sameSite: 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 kun yashaydi
   });
 };
